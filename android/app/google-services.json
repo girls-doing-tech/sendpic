@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1046899290518",
+    "project_id": "sendwallet-c3509",
+    "storage_bucket": "sendwallet-c3509.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1046899290518:android:d8b6583bcd3915c3452db7",
+        "android_client_info": {
+          "package_name": "com.example.send_pic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy2NMkDCnD2c8c0kXVWjZJL5SMTJ86W8M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
