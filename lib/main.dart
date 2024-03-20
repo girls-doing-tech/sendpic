@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -7,20 +6,23 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'device_info.dart';
 
-void main() async{
+void main() async {
   // ensure all widgets successfully initialized
   WidgetsFlutterBinding.ensureInitialized();
   // initialize fire base
-  Platform.isAndroid ?
-  await Firebase.initializeApp(
-      options: FirebaseOptions(
-        apiKey: "AIzaSyDy2NMkDCnD2c8c0kXVWjZJL5SMTJ86W8M",
-        appId: "1:1046899290518:android:d8b6583bcd3915c3452db7",
-        messagingSenderId: "1046899290518",
-        projectId: "sendwallet-c3509",
-        storageBucket: "gs://sendwallet-c3509.appspot.com",
-      )) : await Firebase.initializeApp();
+  // Platform.isAndroid ?
+  true
+      ? await Firebase.initializeApp(
+          options: FirebaseOptions(
+          apiKey: "AIzaSyDy2NMkDCnD2c8c0kXVWjZJL5SMTJ86W8M",
+          appId: "1:1046899290518:android:d8b6583bcd3915c3452db7",
+          messagingSenderId: "1046899290518",
+          projectId: "sendwallet-c3509",
+          storageBucket: "gs://sendwallet-c3509.appspot.com",
+        ))
+      : await Firebase.initializeApp();
 
   runApp(const MyApp());
 }
@@ -34,25 +36,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      // home: const DeviceInfo(),
+      routes: {
+        DeviceInfo.id: (context) => const DeviceInfo(),
+      },
     );
   }
 }
@@ -86,26 +77,25 @@ class _MyHomePageState extends State<MyHomePage> {
       return 'No Image Selected';
     }
   }
+
   Future<Uint8List?> compressImage(Uint8List image) async {
     // Compress the image using flutter_image_compress
     List<int> compressedBytes = await FlutterImageCompress.compressWithList(
       image,
       minHeight: 1920, // set the minimum height
-      minWidth: 1080,  // set the minimum width
-      quality: 80,     // set the quality percentage
+      minWidth: 1080, // set the minimum width
+      quality: 80, // set the quality percentage
     );
 
     // Return the compressed image as Uint8List
     return Uint8List.fromList(compressedBytes);
   }
-  _uploadImageToStorage(Uint8List? image,String name) async {
+
+  _uploadImageToStorage(Uint8List? image, String name) async {
     // create folder profile image and the name of image to be user uid
     Uint8List? compressedImage = await compressImage(image!);
 
-    Reference ref = await _storage
-        .ref()
-        .child('profileImage')
-        .child(name);
+    Reference ref = await _storage.ref().child('profileImage').child(name);
     // put data into upload
     final newMetadata = SettableMetadata(
       contentType: "image",
@@ -118,20 +108,23 @@ class _MyHomePageState extends State<MyHomePage> {
     String downloadUrl = await snapshot.ref.getDownloadURL();
     return downloadUrl;
   }
+
   Uint8List? image;
-   late String imagePath='';
+  late String imagePath = '';
   capturedImage() async {
     Uint8List? img = await pickProfileImage(ImageSource.camera);
     setState(() {
       image = img;
     });
   }
+
   selectGalleryImage() async {
     Uint8List? img = await pickProfileImage(ImageSource.gallery);
     setState(() {
       image = img;
     });
   }
+
   /*Future<XFile?> compressImage(File file) async {
     final filePath = file.absolute.path;
     final lastIndex = filePath.lastIndexOf(RegExp(r'.png|.jp'));
@@ -160,69 +153,76 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Image Picker Example"),
+      appBar: AppBar(
+        title: const Text("Image Picker Example"),
+      ),
+      body: Center(
+        child: Row(
+          children: [
+            const SizedBox(height: 30.0),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 60,
+                ),
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue,
+              ),
+              child: const Text('Device iInformation'),
+              onPressed: () {
+                Navigator.pushNamed(context, DeviceInfo.id);
+              },
+            ),
+            Column(
+              children: [
+                MaterialButton(
+                    color: Colors.blue,
+                    child: const Text("Pick Image from Gallery",
+                        style: TextStyle(
+                            color: Colors.white70,
+                            fontWeight: FontWeight.bold)),
+                    onPressed: () async {
+                      await selectGalleryImage();
+                      setState(() async {
+                        if (image != null) {
+                          imagePath =
+                              await _uploadImageToStorage(image!, '12354');
+                          print(imagePath);
+                        }
+                      });
+                    }),
+                MaterialButton(
+                    color: Colors.blue,
+                    child: const Text("Pick Image from Camera",
+                        style: TextStyle(
+                            color: Colors.white70,
+                            fontWeight: FontWeight.bold)),
+                    onPressed: () async {
+                      await capturedImage();
+                      setState(() async {
+                        if (image != null) {
+                          imagePath =
+                              await _uploadImageToStorage(image!, '12354');
+                          print(imagePath);
+                        }
+                      });
+                    }),
+                image == null
+                    ? Text('No image selected.')
+                    : CircleAvatar(
+                        radius: 65,
+                        backgroundColor: Colors.white,
+                        backgroundImage: MemoryImage(image!),
+                      ),
+                Text(imagePath!),
+                imagePath == null
+                    ? Text('No image uploaded.')
+                    : Image.network(imagePath!),
+              ],
+            ),
+          ],
         ),
-        body: Center(
-          child: Column(
-            children: [
-              MaterialButton(
-                  color: Colors.blue,
-                  child: const Text(
-                      "Pick Image from Gallery",
-                      style: TextStyle(
-                          color: Colors.white70, fontWeight: FontWeight.bold
-                      )
-                  ),
-                  onPressed: () async{
-
-                    await selectGalleryImage();
-                    setState(()async {
-                      if(image != null){
-                        imagePath=  await _uploadImageToStorage(image!,'12354');
-                        print(imagePath);
-                      }
-
-                    });
-
-                  }
-              ),
-              MaterialButton(
-                  color: Colors.blue,
-                  child: const Text(
-                      "Pick Image from Camera",
-                      style: TextStyle(
-                          color: Colors.white70, fontWeight: FontWeight.bold
-                      )
-                  ),
-                  onPressed: ()async  {
-                    await capturedImage();
-                    setState(()async {
-                      if(image != null){
-                        imagePath =  await _uploadImageToStorage(image!,'12354');
-                        print(imagePath);
-                      }
-
-                    });
-
-                  }
-              ),
-              image == null
-                  ? Text('No image selected.')
-                  : CircleAvatar(
-                radius: 65,
-                backgroundColor: Colors.white,
-                backgroundImage: MemoryImage(image!),
-              ),
-               Text(
-               imagePath!
-              ),
-              imagePath == null
-                  ? Text('No image uploaded.')
-                  : Image.network(imagePath!),
-            ],
-          ),
-        )
+      ),
     );
   }
 }
