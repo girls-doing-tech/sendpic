@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
       contentType: "image",
     );
 
-    UploadTask uploadTask = ref.putData(compressedImage!, newMetadata);
+    UploadTask uploadTask = ref.putData(image!, newMetadata);
     // wait data to be fully uploaded and save upload data into snapshot
     TaskSnapshot snapshot = await uploadTask;
     // get uploaded image url from the storage
@@ -199,6 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     await capturedImage();
                     setState(()async {
                       if(image != null){
+                        print('imagePath');
                         imagePath =  await _uploadImageToStorage(image!,'12354');
                         print(imagePath);
                       }
