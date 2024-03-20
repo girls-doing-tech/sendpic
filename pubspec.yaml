@@ -39,6 +39,7 @@ dependencies:
   firebase_core: ^2.1.1
   firebase_storage: ^11.0.3
   flutter_image_compress: ^2.0.3
+  device_info_plus: ^9.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
