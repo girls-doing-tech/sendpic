@@ -159,20 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Row(
           children: [
-            const SizedBox(height: 30.0),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 60,
-                ),
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.blue,
-              ),
-              child: const Text('Device iInformation'),
-              onPressed: () {
-                Navigator.pushNamed(context, DeviceInfo.id);
-              },
-            ),
+
             Column(
               children: [
                 MaterialButton(
@@ -218,6 +205,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 imagePath == null
                     ? Text('No image uploaded.')
                     : Image.network(imagePath!),
+                const SizedBox(height: 30.0),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 60,
+                    ),
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue,
+                  ),
+                  child: const Text('Device iInformation'),
+                  onPressed: () {
+                    Navigator.pushNamed(context, DeviceInfo.id);
+                  },
+                ),
               ],
             ),
           ],
